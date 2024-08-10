@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cadastro {
+  id         String  @id @default(uuid())
+  userId     String
+  name       String
+  surname    String
+  password   String
+  user       User    @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id          String     @id @default(uuid())
+  name        String
+  createdAt   DateTime   @default(now())
+  role        String
+  Cadastro    Cadastro?
+  Chamados    Chamado[]
+}
+
+model Chamado {
+  id          String    @id @default(uuid())
+  motivo      String
+  setor       String
+  comment     String
+  files       String[]
+  username    String
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+}
