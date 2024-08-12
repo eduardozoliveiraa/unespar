@@ -1,5 +1,3 @@
-// src/app/components/Chamados/page.tsx
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -20,13 +18,21 @@ const Chamados = () => {
 
   useEffect(() => {
     const fetchChamados = async () => {
+      const storedUsername = localStorage.getItem('username');
+      if (!storedUsername) {
+        setError('Usuário não encontrado. Por favor, faça login novamente.');
+        return;
+      }
+
       try {
-        const res = await fetch('/api/getChamados', {
-          method: 'GET', 
+        const res = await fetch(`/api/getChamados?username=${storedUsername}`, {
+          method: 'GET',
         });
+
         if (!res.ok) {
           throw new Error('Failed to fetch chamados');
         }
+
         const data = await res.json();
         setChamados(data);
       } catch (err) {
@@ -41,7 +47,7 @@ const Chamados = () => {
   return (
     <div>
       <Header />
-      <h1>Chamados</h1>
+      <h1>Meus Chamados</h1>
       {error && <p>{error}</p>}
       <ul>
         {chamados.map((chamado) => (

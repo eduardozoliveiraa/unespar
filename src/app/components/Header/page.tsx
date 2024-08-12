@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import { ArrowDown } from "lucide-react";
 import Link from "next/link";
@@ -44,12 +44,12 @@ const Header = () => {
             <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-10">
               <ul className="py-2">
                 <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                  <Link href={"/pages/Pagprincipal"}>Novo chamado</Link>
+                </li>
+                <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
                   <Link href={`/pages/Chamados?userId=${userId}`}>
                     Meus Chamados
                   </Link>
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
-                  Log out
                 </li>
               </ul>
             </div>
