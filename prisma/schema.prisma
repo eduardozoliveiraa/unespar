@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,21 +9,11 @@ datasource db {
 }
 
 model Cadastro {
-  id         String  @id @default(uuid())
-  userId     String
-  name       String
+  id         String    @id @default(uuid())
+  name       String    @unique
   surname    String
   password   String
-  user       User    @relation(fields: [userId], references: [id])
-}
-
-model User {
-  id          String     @id @default(uuid())
-  name        String
-  createdAt   DateTime   @default(now())
-  role        String
-  Cadastro    Cadastro?
-  Chamados    Chamado[]
+  chamados   Chamado[] @relation("CadastroChamados")
 }
 
 model Chamado {
@@ -30,8 +21,7 @@ model Chamado {
   motivo      String
   setor       String
   comment     String
-  files       String[]
+  files       String[]  
   username    String
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
+  cadastro    Cadastro @relation("CadastroChamados", fields: [username], references: [name])
 }

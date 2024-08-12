@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   const { motivo, setor, comment, files, username } = await req.json();
 
   try {
-    const user = await prisma.user.findFirst({
+    const user = await prisma.cadastro.findFirst({
       where: { name: username },
     });
 
@@ -19,8 +19,9 @@ export async function POST(req: NextRequest) {
         setor,
         comment,
         files,
-        username,
-        userId: user.id,
+        cadastro: {
+          connect: { name: username },
+        },
       },
     });
 
