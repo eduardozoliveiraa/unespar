@@ -3,21 +3,36 @@
 import React, { useEffect, useState } from "react";
 import { ArrowDown } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const [username, setUsername] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter(); 
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
     const storedUserId = localStorage.getItem("userId");
+    const storedUserRole = localStorage.getItem("userRole");
     setUsername(storedUsername);
     setUserId(storedUserId);
+    setUserRole(storedUserRole);
+    console.log("Username:", storedUsername);
+    console.log("User Role:", storedUserRole);
   }, []);
+  
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userRole");
+    router.push("/");
   };
 
   return (
@@ -50,6 +65,22 @@ const Header = () => {
                   <Link href={`/pages/Chamados?userId=${userId}`}>
                     Meus Chamados
                   </Link>
+                </li>
+                {userRole === "ADMIN" && (
+                  <>
+                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                      <Link href="/admin/CreateLogin">Adicionar Cadastro</Link>
+                    </li>
+                    <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                      <Link href="/pages/ViewAllChamados">Visualizar Chamados</Link>
+                    </li>
+                  </>
+                )}
+                <li
+                  className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={handleLogout}
+                >
+                  Logout
                 </li>
               </ul>
             </div>

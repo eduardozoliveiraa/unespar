@@ -10,10 +10,13 @@ datasource db {
 
 model Cadastro {
   id         String    @id @default(uuid())
-  name       String    @unique
+  name       String   
   surname    String
   password   String
+  role       String
   chamados   Chamado[] @relation("CadastroChamados")
+
+  @@unique([name, surname])   
 }
 
 model Chamado {
@@ -22,6 +25,7 @@ model Chamado {
   setor       String
   comment     String
   files       String[]  
+  cadastroId  String
   username    String
-  cadastro    Cadastro @relation("CadastroChamados", fields: [username], references: [name])
+  cadastro    Cadastro @relation("CadastroChamados", fields: [cadastroId], references: [id])
 }
