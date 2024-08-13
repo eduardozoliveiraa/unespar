@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
         comment,
         files,
         cadastro: {
-          connect: { name: username },
+          connect: { id: user.id }, 
         },
       },
     });

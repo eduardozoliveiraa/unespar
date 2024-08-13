@@ -1,56 +1,62 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '../../../../lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "../../../../lib/prisma";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const username = searchParams.get('username');
+  const username = searchParams.get("username");
 
   if (!username) {
-    return NextResponse.json({ error: 'Username not provided.' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Username not provided." },
+      { status: 400 }
+    );
   }
 
   try {
-    // Fetch user role
     const user = await prisma.cadastro.findUnique({
       where: { name: username },
-      select: { role: true, name: true }, // Inclua o campo 'role' aqui
+      select: { id: true, role: true },
     });
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found.' }, { status: 404 });
+      return NextResponse.json({ error: "User not found." }, { status: 404 });
     }
 
     let chamados;
-    if (user.role === 'ADMIN') {
-      // Fetch all chamados for ADMIN
+    if (user.role === "ADMIN") {
       chamados = await prisma.chamado.findMany({
-        select: {
-          id: true,
-          motivo: true,
-          setor: true,
-          comment: true,
-          files: true,
-          username: true,
+        include: {
+          cadastro: {
+            select: { name: true },
+          },
         },
       });
     } else {
-      // Fetch chamados for the specific user
       chamados = await prisma.chamado.findMany({
-        where: { username },
-        select: {
-          id: true,
-          motivo: true,
-          setor: true,
-          comment: true,
-          files: true,
-          username: true,
+        where: { cadastroId: user.id },
+        include: {
+          cadastro: {
+            select: { name: true },
+          },
         },
       });
     }
 
-    return NextResponse.json(chamados, { status: 200 });
+    const response = chamados.map((chamado) => ({
+      id: chamado.id,
+      motivo: chamado.motivo, 
+      setor: chamado.setor,
+      comment: chamado.comment,
+      files: chamado.files,
+      username: chamado.cadastro.name,
+    }));
+
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.error('Error fetching chamados:', error);
-    return NextResponse.json({ error: 'Failed to fetch chamados.' }, { status: 500 });
+    console.error("Error fetching chamados:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch chamados." },
+      { status: 500 }
+    );
   }
 }

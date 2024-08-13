@@ -10,6 +10,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Todos os campos são obrigatórios' }, { status: 400 });
     }
 
+    const login = `${name}.${surname}`;
+
     const newUser = await prisma.cadastro.create({
       data: {
         name,

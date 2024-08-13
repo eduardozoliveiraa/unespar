@@ -15,34 +15,44 @@ interface Chamado {
 const Chamados = () => {
   const [chamados, setChamados] = useState<Chamado[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchChamados = async () => {
+      setLoading(true);
       const storedUsername = localStorage.getItem('username');
       if (!storedUsername) {
         setError('Usuário não encontrado. Por favor, faça login novamente.');
+        setLoading(false);
         return;
       }
-
+  
       try {
         const res = await fetch(`/api/getChamados?username=${storedUsername}`, {
           method: 'GET',
         });
-
+  
         if (!res.ok) {
           throw new Error('Failed to fetch chamados');
         }
-
+  
         const data = await res.json();
         setChamados(data);
       } catch (err) {
         setError('Error fetching chamados');
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
-
+  
     fetchChamados();
   }, []);
+  
+  if (loading) {
+    return <p>Carregando...</p>;
+  }
+    
 
   return (
     <div className="mx-auto bg-gray-100 rounded-lg">

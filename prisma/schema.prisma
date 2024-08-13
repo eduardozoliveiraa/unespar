@@ -26,6 +26,5 @@ model Chamado {
   comment     String
   files       String[]  
   cadastroId  String
-  username    String
   cadastro    Cadastro @relation("CadastroChamados", fields: [cadastroId], references: [id])
 }
