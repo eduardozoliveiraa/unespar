@@ -6,11 +6,11 @@ export async function POST(req: NextRequest) {
     const { name, password } = await req.json();
 
     if (!name || !password) {
-      return NextResponse.json({ message: 'Nome e senha são obrigatórios' }, { status: 400 });
+      return NextResponse.json({ message: 'Login e senha são obrigatórios' }, { status: 400 });
     }
 
     const cadastro = await prisma.cadastro.findFirst({
-      where: { name },
+      where: { login: name },
     });
 
     if (!cadastro) {

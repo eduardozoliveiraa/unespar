@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const user = await prisma.cadastro.findFirst({
-      where: { name: username },
+      where: { login: username },
     });
 
     if (!user) {
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
         motivo,
         setor,
         comment,
-        files,
+        files, 
         cadastro: {
           connect: { id: user.id }, 
         },

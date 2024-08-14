@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
-export async function POST(req: NextRequest) {
-  const { username } = await req.json();
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const username = searchParams.get("username");
 
   if (!username) {
     return NextResponse.json(
@@ -20,22 +21,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found." }, { status: 404 });
     }
 
-    const chamados = user.role === "ADMIN"
-      ? await prisma.chamado.findMany({
-          include: { cadastro: { select: { login: true } } },
-        })
-      : await prisma.chamado.findMany({
-          where: { cadastroId: user.id },
-          include: { cadastro: { select: { login: true } } },
-        });
+    let chamados;
+    if (user.role === "ADMIN") {
+      chamados = await prisma.chamado.findMany({
+        include: {
+          cadastro: {
+            select: { login: true }, 
+          },
+        },
+      });
+    } else {
+      chamados = await prisma.chamado.findMany({
+        where: { cadastroId: user.id },
+        include: {
+          cadastro: {
+            select: { login: true }, 
+          },
+        },
+      });
+    }
 
     const response = chamados.map((chamado) => ({
       id: chamado.id,
-      motivo: chamado.motivo,
+      motivo: chamado.motivo, 
       setor: chamado.setor,
       comment: chamado.comment,
       files: chamado.files,
-      username: chamado.cadastro.login,
+      username: chamado.cadastro.login, 
     }));
 
     return NextResponse.json(response, { status: 200 });

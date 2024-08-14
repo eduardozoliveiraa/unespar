@@ -28,12 +28,8 @@ const Chamados = () => {
       }
   
       try {
-        const res = await fetch(`/api/getChamados`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username: storedUsername }),
+        const res = await fetch(`/api/chamadosAdm?username=${storedUsername}`, {
+          method: 'GET',
         });
   
         if (!res.ok) {
@@ -56,6 +52,7 @@ const Chamados = () => {
   if (loading) {
     return <p>Carregando...</p>;
   }
+    
 
   return (
     <div className="mx-auto bg-gray-100 rounded-lg">

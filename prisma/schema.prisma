@@ -14,6 +14,7 @@ model Cadastro {
   surname    String
   password   String
   role       String
+  login      String    @unique
   chamados   Chamado[] @relation("CadastroChamados")
 
   @@unique([name, surname])   

@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         surname,
+        login,  
         password,
         role,
       },

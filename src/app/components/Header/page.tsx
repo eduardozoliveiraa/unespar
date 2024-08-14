@@ -72,7 +72,7 @@ const Header = () => {
                       <Link href="/admin/CreateLogin">Adicionar Cadastro</Link>
                     </li>
                     <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
-                      <Link href="/pages/ViewAllChamados">Visualizar Chamados</Link>
+                      <Link href="/pages/ChamadosAdm">Visualizar Chamados</Link>
                     </li>
                   </>
                 )}

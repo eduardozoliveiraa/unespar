@@ -24,7 +24,7 @@ export default function CreateLogin() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, password }),
+        body: JSON.stringify({ name, password }),  
       });
 
       if (!response.ok) {
@@ -34,7 +34,7 @@ export default function CreateLogin() {
       const data = await response.json();
 
       if (data.redirect) {
-        localStorage.setItem('username', name);
+        localStorage.setItem('username', name);  
         localStorage.setItem('userRole', data.role);
         window.location.href = data.redirect;
       } else if (data.message) {
@@ -61,7 +61,7 @@ export default function CreateLogin() {
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
-                Nome do Usuário
+                Nome de Usuário
               </label>
               <input
                 type="text"
@@ -70,7 +70,7 @@ export default function CreateLogin() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-lg text-black"
-                placeholder="Digite o nome do usuário"
+                placeholder="Digite seu login"
               />
             </div>
 
@@ -85,7 +85,7 @@ export default function CreateLogin() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-lg text-black"
-                placeholder="Digite a sua senha"
+                placeholder="Digite sua senha"
               />
             </div>
 
