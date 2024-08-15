@@ -2,14 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/prisma';
 
 export async function POST(req: NextRequest) {
-  const { motivo, setor, comment, files, username } = await req.json();
-
   try {
+    const { motivo, setor, comment, files, username } = await req.json();
+
+    console.log('Received data:', { motivo, setor, comment, files, username });
+
     const user = await prisma.cadastro.findFirst({
       where: { login: username },
     });
 
     if (!user) {
+      console.log('User not found for username:', username);
       return NextResponse.json({ error: 'Usuário não encontrado.' }, { status: 404 });
     }
 
@@ -20,11 +23,12 @@ export async function POST(req: NextRequest) {
         comment,
         files, 
         cadastro: {
-          connect: { id: user.id }, 
+          connect: { id: user.id },
         },
       },
     });
 
+    console.log('Chamado created successfully:', chamado);
     return NextResponse.json(chamado, { status: 201 });
   } catch (error) {
     console.error('Error creating chamado:', error);
