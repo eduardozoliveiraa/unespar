@@ -10,13 +10,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Todos os campos são obrigatórios' }, { status: 400 });
     }
 
-    const login = `${name}.${surname}`;
+    let login = `${name}.${surname}`;
+    let exists = await prisma.cadastro.findUnique({
+      where: { login },
+    });
+
+    if (exists) {
+      let count = 1;
+      while (exists) {
+        login = `${name}.${surname}${count}`;
+        exists = await prisma.cadastro.findUnique({
+          where: { login },
+        });
+        count++;
+      }
+    }
 
     const newUser = await prisma.cadastro.create({
       data: {
         name,
         surname,
-        login,  
+        login,
         password,
         role,
       },
@@ -27,10 +41,11 @@ export async function POST(req: NextRequest) {
       redirect: '/admin/CreateLogin',
     }, { status: 201 });
   } catch (error: any) {
+    console.error('Erro ao fazer o cadastro:', error);  
     if (error.code === 'P2002') {
       return NextResponse.json({ message: 'Nome e Sobrenome já estão em uso' }, { status: 409 });
     }
-    console.error('Erro ao fazer o cadastro:', error);
     return NextResponse.json({ message: 'Erro no servidor', error: error.message }, { status: 500 });
   }
 }
+

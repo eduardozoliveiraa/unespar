@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
         setor,
         comment,
         files, 
+        status: "pendente",
         cadastro: {
           connect: { id: user.id }, 
         },
