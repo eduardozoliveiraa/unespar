@@ -20,14 +20,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found." }, { status: 404 });
     }
 
-    const chamados = user.role === "ADMIN"
-      ? await prisma.chamado.findMany({
-          include: { cadastro: { select: { login: true } } },
-        })
-      : await prisma.chamado.findMany({
-          where: { cadastroId: user.id },
-          include: { cadastro: { select: { login: true } } },
-        });
+    // Buscar chamados associados ao usuário logado
+    const chamados = await prisma.chamado.findMany({
+      where: { cadastroId: user.id },
+      include: { cadastro: { select: { login: true } } },
+    });
 
     const response = chamados.map((chamado) => ({
       id: chamado.id,

@@ -23,30 +23,26 @@ const Chamados = () => {
   useEffect(() => {
     const fetchChamados = async () => {
       setLoading(true);
-      const storedUsername = localStorage.getItem("username");
+      const storedUsername = localStorage.getItem('username');
       if (!storedUsername) {
-        setError("Usuário não encontrado. Por favor, faça login novamente.");
+        setError('Usuário não encontrado. Por favor, faça login novamente.');
         setLoading(false);
         return;
       }
-
+  
       try {
-        const res = await fetch(`/api/getChamados`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username: storedUsername }),
+        const res = await fetch(`/api/chamadosAdm?username=${storedUsername}`, {
+          method: 'GET',
         });
-
+  
         if (!res.ok) {
-          throw new Error("Failed to fetch chamados");
+          throw new Error('Failed to fetch chamados');
         }
-
+  
         const data = await res.json();
         setChamados(data);
       } catch (err) {
-        setError("Error fetching chamados");
+        setError('Error fetching chamados');
         console.error(err);
       } finally {
         setLoading(false);

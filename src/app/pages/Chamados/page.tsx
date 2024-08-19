@@ -18,6 +18,7 @@ const Chamados = () => {
   const [chamados, setChamados] = useState<Chamado[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedMotivo, setSelectedMotivo] = useState<string>("");
 
   useEffect(() => {
     const fetchChamados = async () => {
@@ -79,6 +80,15 @@ const Chamados = () => {
     }
   };
 
+  const handleMotivoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedMotivo(e.target.value);
+  };
+
+  const filteredChamados = chamados.filter(
+    (chamado) =>
+      selectedMotivo === "" || chamado.motivo.toLowerCase() === selectedMotivo.toLowerCase()
+  );
+
   if (loading) {
     return <p>Carregando...</p>;
   }
@@ -90,8 +100,28 @@ const Chamados = () => {
         Meus Chamados
       </h1>
       {error && <p className="text-red-500 text-center">{error}</p>}
+
+      <div className="mb-4 text-center">
+        <label htmlFor="motivo" className="mr-2 font-medium text-zinc-700">
+          Filtrar por Motivo:
+        </label>
+        <select
+          id="motivo"
+          value={selectedMotivo}
+          onChange={handleMotivoChange}
+          className="border rounded-md p-2 text-zinc-700"
+        >
+          <option value="">Todos</option>
+          <option value="internet">Internet</option>
+          <option value="sistema">Sistema</option>
+          <option value="computador não liga">Computador não Liga</option>
+          <option value="computador com barulho estranho">Computador com Barulho Estranho</option>
+          <option value="outro">Outro</option>
+        </select>
+      </div>
+
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow-md rounded-lg ">
+        <table className="min-w-full bg-white shadow-md rounded-lg">
           <thead>
             <tr>
               <th className="px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
@@ -100,22 +130,19 @@ const Chamados = () => {
               <th className="px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
                 Setor
               </th>
-              <th className="px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
+              <th className="px-4 py-2 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
                 Comentário
               </th>
-              <th className="px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
-                Files
+              <th className="px-4 py-2 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
+                Arquivos
               </th>
-              <th className="px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
-                Username
-              </th>
-              <th className="px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
+              <th className="px-4 py-2 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
                 Status
               </th>
             </tr>
           </thead>
           <tbody>
-            {chamados.map((chamado) => (
+            {filteredChamados.map((chamado) => (
               <tr key={chamado.id}>
                 <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
                   {chamado.motivo}
@@ -128,9 +155,6 @@ const Chamados = () => {
                 </td>
                 <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
                   {chamado.files.join(", ")}
-                </td>
-                <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
-                  {chamado.username}
                 </td>
                 <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 flex items-center space-x-5">
                   {chamado.status === "pendente" ? (
