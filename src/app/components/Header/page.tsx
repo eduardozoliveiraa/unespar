@@ -39,7 +39,7 @@ const Header = () => {
     <div>
       <div className="flex items-center bg-slate-600 text-white text-lg p-4">
         <img className="w-20 h-auto" src="/logo.png" alt="Logo" />
-        <div className="flex-grow text-center text-2xl md:text-3xl lg:text-4xl font-semibold">
+        <div className="flex-grow text-center text-2xl md:text-3xl lg:text-4xl font-semibold pl-32">
           Central de Chamados
         </div>
         <div className="relative">

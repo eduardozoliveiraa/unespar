@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
       comment: chamado.comment,
       files: chamado.files,
       username: chamado.cadastro.login, 
+      status: chamado.status
     }));
 
     return NextResponse.json(response, { status: 200 });

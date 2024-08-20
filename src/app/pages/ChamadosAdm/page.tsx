@@ -121,7 +121,7 @@ const Chamados = () => {
     <div className="mx-auto bg-gray-100 rounded-lg">
       <Header />
       <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
-        Meus Chamados
+        Todos os Chamados
       </h1>
       {error && <p className="text-red-500 text-center">{error}</p>}
 
