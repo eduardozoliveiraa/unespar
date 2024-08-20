@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Header from "@/app/components/Header/page";
 import { Check, Clock } from "lucide-react";
+import Link from "next/link";
 
 interface Chamado {
   id: string;
@@ -56,32 +57,13 @@ const Chamados = () => {
     fetchChamados();
   }, []);
 
-  const handleStatusChange = async (id: string) => {
-    try {
-      const res = await fetch(`/api/updateChamados`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id, status: "concluido" }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to update status");
-      }
-
-      setChamados((prevChamados) =>
-        prevChamados.map((chamado) =>
-          chamado.id === id ? { ...chamado, status: "concluido" } : chamado
-        )
-      );
-    } catch (err) {
-      console.error("Error updating status:", err);
-    }
-  };
-
   const handleMotivoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMotivo(e.target.value);
+  };
+
+  const truncatedComment = (comment: string) => {
+    const limit = 6;
+    return comment.length > limit ? `${comment.substring(0, limit)}...` : comment;
   };
 
   const filteredChamados = chamados.filter(
@@ -139,6 +121,9 @@ const Chamados = () => {
               <th className="px-4 py-2 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
                 Status
               </th>
+              <th className="px-4 py-2 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-700">
+                Ações
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -151,29 +136,30 @@ const Chamados = () => {
                   {chamado.setor}
                 </td>
                 <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
-                  {chamado.comment}
+                  {truncatedComment(chamado.comment)}
                 </td>
                 <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
                   {chamado.files.join(", ")}
                 </td>
                 <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 flex items-center space-x-5">
                   {chamado.status === "pendente" ? (
-                    <button
-                      onClick={() => handleStatusChange(chamado.id)}
-                      className="flex items-center space-x-2 text-red-600 border border-red-600 rounded-md px-2 py-1 hover:bg-red-100 transition"
-                    >
+                    <div className="flex items-center space-x-2 text-red-600 border border-red-600 rounded-md px-2 py-1 hover:bg-red-100 transition">
                       <Clock />
                       <span>Pendente</span>
-                    </button>
+                    </div>
                   ) : (
-                    <button
-                      disabled
-                      className="flex items-center space-x-2 text-green-600 border border-green-600 rounded-md px-2 py-1 cursor-not-allowed"
-                    >
+                    <div className="flex items-center space-x-2 text-green-600 border border-green-600 hover:bg-green-100 rounded-md px-2 py-1">
                       <Check />
                       <span>Concluído</span>
-                    </button>
+                    </div>
                   )}
+                </td>
+                <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
+                  <Link href={`/pages/detalhesChamado/${chamado.id}`}>
+                    <button className="text-blue-600 hover:text-blue-800">
+                      Ver detalhes
+                    </button>
+                  </Link>
                 </td>
               </tr>
             ))}
