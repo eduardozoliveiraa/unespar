@@ -10,6 +10,7 @@ interface Chamado {
   setor: string;
   comment: string;
   status: string;
+  username: string;
 }
 
 const DetalhesChamado = () => {
@@ -18,8 +19,13 @@ const DetalhesChamado = () => {
   const [chamado, setChamado] = useState<Chamado | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
     const fetchChamado = async () => {
       try {
         const res = await fetch(`/api/chamado/${id}`);
@@ -61,6 +67,10 @@ const DetalhesChamado = () => {
         </h1>
         {chamado && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col">
+              <span className="font-medium text-gray-600">Usuário:</span>
+              <span className="text-lg text-gray-900">{username}</span>
+            </div>
             <div className="flex flex-col">
               <span className="font-medium text-gray-600">Motivo:</span>
               <span className="text-lg text-gray-900">{chamado.motivo}</span>

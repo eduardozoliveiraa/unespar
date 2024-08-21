@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import Header from "@/app/components/Header/page";
 
 const Chamados = () => {
   const [selectedMotivo, setSelectedMotivo] = useState<string | null>(null);
   const [selectedSetor, setSelectedSetor] = useState<string | null>(null);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
 
@@ -22,16 +22,15 @@ const Chamados = () => {
     setComment(e.target.value);
   };
 
- const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  if (e.target.files) {
-    const selectedFiles = Array.from(e.target.files); 
-    setFiles(prevFiles => [...prevFiles, ...selectedFiles]);
-  }
-};
-
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const selectedFiles = Array.from(e.target.files);
+      setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+    }
+  };
 
   const removeFile = (fileName: string) => {
-    setFiles(prevFiles => prevFiles.filter(file => file.name !== fileName));
+    setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
   };
 
   const handleButtonClick = async () => {
@@ -44,32 +43,32 @@ const Chamados = () => {
 
     if (storedUsername) {
       try {
-        const response = await fetch('/api/chamados', {
-          method: 'POST',
+        const response = await fetch("/api/chamados", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             motivo: selectedMotivo,
             setor: selectedSetor,
             comment,
-            files: files.map(file => file.name), 
+            files: files.map((file) => file.name),
             username: storedUsername,
           }),
         });
 
         if (response.ok) {
-          alert('Chamado criado com sucesso!');
+          alert("Chamado criado com sucesso!");
           setSelectedMotivo(null);
           setSelectedSetor(null);
-          setComment('');
+          setComment("");
           setFiles([]);
         } else {
-          alert('Falha ao criar o chamado.');
+          alert("Falha ao criar o chamado.");
         }
       } catch (error) {
-        console.error('Error:', error);
-        alert('Erro ao criar o chamado.');
+        console.error("Error:", error);
+        alert("Erro ao criar o chamado.");
       }
     }
   };
@@ -101,8 +100,8 @@ const Chamados = () => {
                 Escolha um motivo
               </option>
               {[
-                "Internet",
-                "Sistema",
+                "Sem Internet ou Internet lenta",
+                "Sistema Travado",
                 "Computador não liga",
                 "Computador com barulho estranho",
                 "Outros",
@@ -141,6 +140,16 @@ const Chamados = () => {
                 "Diretor",
                 "Biblioteca",
                 "Direitos Humanos",
+                "Laphis",
+                "Life",
+                "Colegiado Direito",
+                "Colegiado de Pedagogia",
+                "DAF",
+                "Prograd",
+                "Agitec",
+                "Patrimonio",
+                "Cotação",
+                "Niet",
               ].map((item) => (
                 <option key={item} value={item}>
                   {item}
@@ -182,10 +191,15 @@ const Chamados = () => {
             />
             {files.length > 0 && (
               <div className="mt-4">
-                <h3 className="text-lg font-bold text-gray-800">Arquivos Selecionados:</h3>
+                <h3 className="text-lg font-bold text-gray-800">
+                  Arquivos Selecionados:
+                </h3>
                 <ul className="list-disc list-inside text-gray-800 mt-2">
                   {files.map((file) => (
-                    <li key={file.name} className="flex items-center justify-between">
+                    <li
+                      key={file.name}
+                      className="flex items-center justify-between"
+                    >
                       <span className="truncate">{file.name}</span>
                       <button
                         onClick={() => removeFile(file.name)}
@@ -204,7 +218,9 @@ const Chamados = () => {
         <div className="relative mt-8">
           <button
             className={`px-6 py-3 text-white font-bold rounded-lg transition-colors duration-300 ${
-              selectedMotivo && selectedSetor ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-500'
+              selectedMotivo && selectedSetor
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-gray-500"
             }`}
             onClick={handleButtonClick}
           >
