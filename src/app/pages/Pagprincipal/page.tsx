@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Header from "@/app/components/Header/page";
+import Link from "next/link";
 
 const Chamados = () => {
   const [selectedMotivo, setSelectedMotivo] = useState<string | null>(null);
@@ -84,6 +85,9 @@ const Chamados = () => {
       <div className="bg-gray-900 p-10 min-h-screen flex flex-col items-center justify-center">
         <div className="w-full max-w-3xl bg-white p-8 rounded-lg shadow-lg space-y-6">
           <div>
+            <div className="flex  justify-end text-blue-500">
+             <Link href={"/pages/duvidas"}>Dúvidas frequentes</Link> 
+            </div>
             <label
               htmlFor="motivo"
               className="block text-lg font-bold mb-2 text-gray-800"
