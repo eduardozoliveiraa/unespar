@@ -5,13 +5,32 @@ import { useRouter } from "next/navigation";
 import Header from "@/app/components/Header/page";
 import { Check, Clock } from "lucide-react";
 import Link from "next/link";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 interface Chamado {
   id: string;
   motivo: string;
   setor: string;
   comment: string;
-  files: string[];
+  files: string[]; // Supondo que files armazene URLs dos arquivos
   username: string;
   status: string;
 }
@@ -21,9 +40,6 @@ const Chamados = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedMotivo, setSelectedMotivo] = useState<string>("");
-  const [expandedCommentId, setExpandedCommentId] = useState<string | null>(
-    null
-  );
 
   const router = useRouter();
 
@@ -38,7 +54,7 @@ const Chamados = () => {
       }
 
       try {
-        const res = await fetch(`/api/chamadosAdm?username=${storedUsername}`, {
+        const res = await fetch(`/api/getAllChamados`, {
           method: "GET",
         });
 
@@ -87,31 +103,76 @@ const Chamados = () => {
     setSelectedMotivo(e.target.value);
   };
 
-  const truncatedComment = (comment: string, id: string) => {
+  const truncatedComment = (comment: string) => {
     const limit = 10;
-    if (comment.length > limit) {
-      return expandedCommentId === id
-        ? comment
-        : `${comment.substring(0, limit)}... `;
-    }
-    return comment;
+    return comment.length > limit
+      ? comment.substring(0, limit) + "..."
+      : comment;
   };
 
   const filteredChamados = chamados.filter((chamado) =>
-    [
-      "internet",
-      "sistema",
-      "computador não liga",
-      "computador com barulho estranho",
-      "outro",
-    ].includes(chamado.motivo.toLowerCase())
+    chamado.motivo.toLowerCase().includes(selectedMotivo.toLowerCase())
   );
 
-  const sortedChamados = filteredChamados.sort((a, b) => {
-    if (a.motivo.toLowerCase() === selectedMotivo.toLowerCase()) return -1;
-    if (b.motivo.toLowerCase() === selectedMotivo.toLowerCase()) return 1;
-    return 0;
-  });
+  const chartData = {
+    labels: [
+      "Internet",
+      "Sistema travado",
+      "Computador não liga",
+      "Computador com barulho estranho",
+      "Outro",
+    ],
+    datasets: [
+      {
+        label: "Número de Chamados",
+        data: [
+          chamados.filter(
+            (chamado) => chamado.motivo.toLowerCase() === "internet"
+          ).length,
+          chamados.filter(
+            (chamado) => chamado.motivo.toLowerCase() === "sistema travado"
+          ).length,
+          chamados.filter(
+            (chamado) => chamado.motivo.toLowerCase() === "computador não liga"
+          ).length,
+          chamados.filter(
+            (chamado) =>
+              chamado.motivo.toLowerCase() === "computador com barulho estranho"
+          ).length,
+          chamados.filter((chamado) => chamado.motivo.toLowerCase() === "outro")
+            .length,
+        ],
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            return `${context.dataset.label}: ${context.raw}`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+      },
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
 
   if (loading) {
     return <p>Carregando...</p>;
@@ -120,27 +181,23 @@ const Chamados = () => {
   return (
     <div className="mx-auto bg-gray-100 rounded-lg">
       <Header />
-      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
+      <h1 className="text-3xl font-bold text-center mb-6 pt-6 text-gray-800">
         Todos os Chamados
       </h1>
       {error && <p className="text-red-500 text-center">{error}</p>}
 
-      <div className="mb-4 text-center">
-        <label htmlFor="motivo" className="mr-2 font-medium text-zinc-700">
-          Filtrar por Motivo:
-        </label>
+      <div className="mb-6 text-center">
         <select
-          id="motivo"
           value={selectedMotivo}
           onChange={handleMotivoChange}
-          className="border rounded-md p-2 text-zinc-700"
+          className="px-4 py-2 border rounded-md bg-slate-500"
         >
-          <option value="">Todos</option>
+          <option value="">Selecione um motivo</option>
           <option value="internet">Internet</option>
-          <option value="sistema">Sistema</option>
-          <option value="computador não liga">Computador não Liga</option>
+          <option value="sistema travado">Sistema travado</option>
+          <option value="computador não liga">Computador não liga</option>
           <option value="computador com barulho estranho">
-            Computador com Barulho Estranho
+            Computador com barulho estranho
           </option>
           <option value="outro">Outro</option>
         </select>
@@ -174,7 +231,7 @@ const Chamados = () => {
             </tr>
           </thead>
           <tbody>
-            {sortedChamados.map((chamado) => (
+            {filteredChamados.map((chamado) => (
               <tr key={chamado.id}>
                 <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
                   {chamado.motivo}
@@ -183,10 +240,20 @@ const Chamados = () => {
                   {chamado.setor}
                 </td>
                 <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
-                  {truncatedComment(chamado.comment, chamado.id)}
+                  {truncatedComment(chamado.comment)}
                 </td>
                 <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
-                  {chamado.files.join(", ")}
+                  {chamado.files.map((file, index) => (
+                    <a
+                      key={index}
+                      href={`https://bcvpyoxwhctyxwtnqosv.supabase.co/storage/v1/object/public/unespar/${file}`}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {file}
+                    </a>
+                  ))}
                 </td>
                 <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
                   {chamado.username}
@@ -195,32 +262,31 @@ const Chamados = () => {
                   {chamado.status === "pendente" ? (
                     <button
                       onClick={() => handleStatusChange(chamado.id)}
-                      className="flex items-center space-x-2 text-red-600 border border-red-600 rounded-md px-2 py-1 hover:bg-red-100 transition"
+                      className="flex items-center space-x-2 text-red-600 border border-red-600 rounded-md px-2 py-1 hover:bg-red-600 hover:text-white"
                     >
-                      <Clock />
+                      <Clock size={16} />
                       <span>Pendente</span>
                     </button>
                   ) : (
-                    <button
-                      disabled
-                      className="flex items-center space-x-2 text-green-600 border border-green-600 rounded-md px-2 py-1 cursor-not-allowed"
-                    >
-                      <Check />
+                    <span className="flex items-center space-x-2 text-green-600 border border-green-600 rounded-md px-2 py-1">
+                      <Check size={16} />
                       <span>Concluído</span>
-                    </button>
+                    </span>
                   )}
-                </td>
-                <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
-                  <Link href={`/pages/detalhesChamado/${chamado.id}`}>
-                    <button className="text-blue-600 hover:text-blue-800">
-                      Ver detalhes
-                    </button>
-                  </Link>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-10">
+        <h2 className="text-2xl font-semibold text-gray-800 text-center">
+          Estatísticas de Chamados
+        </h2>
+        <div className="relative h-80 mt-6">
+          <Bar data={chartData} options={chartOptions} />
+        </div>
       </div>
     </div>
   );

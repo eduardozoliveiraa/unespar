@@ -1,8 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { createClient } from "@supabase/supabase-js";
 import Header from "@/app/components/Header/page";
 import Link from "next/link";
+
+// Inicialize o cliente do Supabase
+const supabaseUrl = "https://bcvpyoxwhctyxwtnqosv.supabase.co"; // Substitua pelo seu URL do Supabase
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjdnB5b3h3aGN0eXh3dG5xb3N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM5OTcxMjgsImV4cCI6MjAzOTU3MzEyOH0.p4SuRVAjR9rKtcGGLo41hDJ7Ed7IYqXSCuvUEXzVYLA"; // Substitua pela sua chave de acesso
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const Chamados = () => {
   const [selectedMotivo, setSelectedMotivo] = useState<string | null>(null);
@@ -44,6 +50,23 @@ const Chamados = () => {
 
     if (storedUsername) {
       try {
+        // Faz upload dos arquivos para o Supabase
+        const uploadedFiles = [];
+        for (const file of files) {
+          const { data, error } = await supabase.storage
+            .from("unespar") // Substitua pelo nome do bucket que você criou no Supabase
+            .upload(`uploads/${file.name}`, file);
+
+          if (error) {
+            console.error("Erro ao enviar arquivo:", error.message);
+            alert("Erro ao enviar arquivo.");
+            return;
+          } else {
+            uploadedFiles.push(data.path); // Guarda o caminho do arquivo no Supabase
+          }
+        }
+
+        // Envia o chamado para a API com os caminhos dos arquivos
         const response = await fetch("/api/chamados", {
           method: "POST",
           headers: {
@@ -53,7 +76,7 @@ const Chamados = () => {
             motivo: selectedMotivo,
             setor: selectedSetor,
             comment,
-            files: files.map((file) => file.name),
+            files: uploadedFiles, // Envia os caminhos dos arquivos no Supabase
             username: storedUsername,
           }),
         });
@@ -86,7 +109,7 @@ const Chamados = () => {
         <div className="w-full max-w-3xl bg-white p-8 rounded-lg shadow-lg space-y-6">
           <div>
             <div className="flex  justify-end text-blue-500">
-             <Link href={"/pages/duvidas"}>Dúvidas frequentes</Link> 
+              <Link href={"/pages/duvidas"}>Dúvidas frequentes</Link>
             </div>
             <label
               htmlFor="motivo"
@@ -241,8 +264,8 @@ const Chamados = () => {
               Você precisa selecionar um motivo e um setor antes de avançar.
             </p>
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg"
               onClick={closePopup}
+              className="px-4 py-2 bg-red-700 text-white rounded-lg font-bold hover:bg-red-600 transition duration-300"
             >
               OK
             </button>

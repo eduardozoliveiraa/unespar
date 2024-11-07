@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import Header from '@/app/components/Header/page';
-import { useState, useEffect } from 'react';
+import Header from "@/app/components/Header/page";
+import { useState, useEffect } from "react";
 
 export default function CreateLogin() {
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem('username');
+    const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
-      window.location.href = '/pages/Pagprincipal';
+      window.location.href = "/pages/Pagprincipal";
     }
   }, []);
 
@@ -19,12 +19,12 @@ export default function CreateLogin() {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
+      const response = await fetch("/api/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, password }),  
+        body: JSON.stringify({ name, password }),
       });
 
       if (!response.ok) {
@@ -34,17 +34,17 @@ export default function CreateLogin() {
       const data = await response.json();
 
       if (data.redirect) {
-        localStorage.setItem('username', name);  
-        localStorage.setItem('userRole', data.role);
+        localStorage.setItem("username", name);
+        localStorage.setItem("userRole", data.role);
         window.location.href = data.redirect;
       } else if (data.message) {
         setMessage(data.message);
       } else {
-        setMessage('Erro inesperado: Nenhuma mensagem recebida');
+        setMessage("Erro inesperado: Nenhuma mensagem recebida");
       }
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
-      setMessage('Erro ao tentar fazer login. Tente novamente.');
+      console.error("Erro ao fazer login:", error);
+      setMessage("Erro ao tentar fazer login. Tente novamente.");
     }
   };
 
@@ -60,7 +60,10 @@ export default function CreateLogin() {
 
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
+              <label
+                htmlFor="name"
+                className="block text-gray-700 font-medium mb-2"
+              >
                 Nome de Usuário
               </label>
               <input
@@ -75,7 +78,10 @@ export default function CreateLogin() {
             </div>
 
             <div className="mb-6">
-              <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
+              <label
+                htmlFor="password"
+                className="block text-gray-700 font-medium mb-2"
+              >
                 Senha
               </label>
               <input
@@ -98,7 +104,11 @@ export default function CreateLogin() {
           </form>
 
           {message && (
-            <div className={`mt-4 text-center text-lg font-medium ${message.includes('sucesso') ? 'text-green-600' : 'text-red-600'}`}>
+            <div
+              className={`mt-4 text-center text-lg font-medium ${
+                message.includes("sucesso") ? "text-green-600" : "text-red-600"
+              }`}
+            >
               {message}
             </div>
           )}

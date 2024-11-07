@@ -10,7 +10,7 @@ const Header = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const router = useRouter(); 
+  const router = useRouter();
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
@@ -22,7 +22,6 @@ const Header = () => {
     console.log("Username:", storedUsername);
     console.log("User Role:", storedUserRole);
   }, []);
-  
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -39,14 +38,14 @@ const Header = () => {
     <div>
       <div className="flex items-center bg-slate-600 text-white text-lg p-4">
         <img className="w-20 h-auto" src="/logo.png" alt="Logo" />
-        <div className="flex-grow text-center text-2xl md:text-3xl lg:text-4xl font-semibold pl-32">
+        <div className="flex-grow text-center text-2xl md:text-3xl lg:text-4xl font-semibold ">
           Central de Chamados
-        </div>
+        </div>  
+
         <div className="relative">
           {username && (
-            <div className="flex items-center border border-white text-lg px-4 py-1 rounded-full">
-              <span>{username}</span>
-              <button onClick={toggleMenu} className="ml-2 flex items-center">
+            <div className="flex items-center border border-white text-lg px-3 py-1 rounded-full">
+              <button onClick={toggleMenu} className=" flex items-center">
                 <ArrowDown
                   className={`w-5 h-5 transition-transform border rounded-full ${
                     menuOpen ? "transform rotate-180" : ""

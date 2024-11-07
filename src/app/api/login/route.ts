@@ -21,6 +21,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Senha incorreta' }, { status: 401 });
     }
 
+    // Verifica se a senha é 'unespar'
+    if (password === 'unespar') {
+      return NextResponse.json({
+        message: 'Redirecionando para mudança de senha',
+        redirect: '/pages/MudarSenha',  // Página de mudança de senha
+        role: cadastro.role, 
+      }, { status: 200 });
+    }
+
+    // Se a senha for diferente de 'unespar', redireciona para a página principal
     return NextResponse.json({
       message: 'Login realizado com sucesso',
       redirect: '/pages/Pagprincipal',
