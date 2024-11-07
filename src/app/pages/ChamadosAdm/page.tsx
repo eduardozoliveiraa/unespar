@@ -30,7 +30,7 @@ interface Chamado {
   motivo: string;
   setor: string;
   comment: string;
-  files: string[]; // Supondo que files armazene URLs dos arquivos
+  files: string[]; 
   username: string;
   status: string;
 }
