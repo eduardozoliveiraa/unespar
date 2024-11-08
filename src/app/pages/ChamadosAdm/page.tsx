@@ -14,6 +14,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import Link from "next/link";
 
 ChartJS.register(
   CategoryScale,
@@ -272,6 +273,13 @@ const Chamados = () => {
                       <span>Concluído</span>
                     </span>
                   )}
+                </td>
+                <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
+                  <Link href={`/pages/detalhesChamado/${chamado.id}`}>
+                    <button className="text-blue-600 hover:text-blue-800">
+                      Ver detalhes
+                    </button>
+                  </Link>
                 </td>
               </tr>
             ))}

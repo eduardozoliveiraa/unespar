@@ -44,7 +44,7 @@ export default function CreateLogin() {
     <>
       <Header />
 
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+      <div className="flex justify-center  min-h-screen bg-gray-100 p-6">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
             Cadastro
@@ -83,7 +83,7 @@ export default function CreateLogin() {
 
             <div className="mb-6">
               <label htmlFor="role" className="block text-gray-700 font-medium mb-2">
-                Role
+                Cargo
               </label>
               <select
                 id="role"
