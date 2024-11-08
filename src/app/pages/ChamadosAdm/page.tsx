@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/app/components/Header/page";
 import { Check, Clock } from "lucide-react";
-import Link from "next/link";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
